@@ -52,7 +52,45 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+// 1. TEMPORARILY PUSH THE ROUNDING AND PADDING STYLES
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f); // Set the corner roundness
         
+        // 2. CONFIGURE THE POSITION AND SIZE OF THE MENU
+        // Get the current overall width of your OS application window
+        float windowWidth = ImGui::GetIO().DisplaySize.x;
+        
+        // Set where the menu bar starts (X = 10px from left, Y = 10px padding from top)
+        ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f));
+        
+        // Set the size of the menu bar (Full width minus 20px to keep it centered, 40px tall)
+        ImGui::SetNextWindowSize(ImVec2(windowWidth - 20.0f, 40.0f));
+
+        // 3. SET WINDOW FLAGS TO LOCK IT IN PLACE
+        ImGuiWindowFlags menuFlags = ImGuiWindowFlags_NoTitleBar | 
+                                     ImGuiWindowFlags_NoResize | 
+                                     ImGuiWindowFlags_NoMove | 
+                                     ImGuiWindowFlags_NoScrollbar | 
+                                     ImGuiWindowFlags_MenuBar;
+
+        // 4. DRAW THE CUSTOM BAR
+        if (ImGui::Begin("TopMenuBarContainer", nullptr, menuFlags)) {
+            if (ImGui::BeginMenuBar()) { // Inside a regular window, we use BeginMenuBar
+                if (ImGui::BeginMenu("File")) {
+                    if (ImGui::MenuItem("New Project")) {
+                        appState.hasActiveProject = false;
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenuBar();
+            }
+            ImGui::End(); // Closes "TopMenuBarContainer"
+        }
+
+        // 5. POP THE STYLE SO OTHER WINDOWS DON'T GET FORCED ROUNDING
+        ImGui::PopStyleVar();
+
+        /*
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("New Project")) {
@@ -62,7 +100,7 @@ int main() {
             }
             ImGui::EndMainMenuBar();
         }
-            
+           */ 
 
         if (!appState.hasActiveProject) {
             ImGui::Begin("New Canvas Setup");
