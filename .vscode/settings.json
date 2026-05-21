@@ -1,0 +1,5 @@
+{
+    "code-runner.executorMap": {
+        "cpp": "cd $dir && g++ main.cpp imGui/imgui*.cpp -I. -Iglfw/include -Lglfw/lib -lglfw3 -lopengl32 -lgdi32 -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
+    }
+}
