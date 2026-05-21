@@ -4,77 +4,103 @@
 #include "glfw/include/GLFW/glfw3.h" 
 #include <iostream>
 
-int main() {
-    // 1. Initialize GLFW
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW!" << std::endl;
-        return -1;
-    }
+// Canvas Data
+using std::cout;
 
-    // Create the window
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "DAW Sandbox Test", nullptr, nullptr);
+struct Project {
+  const char *name;
+  int width;
+  int height;
+  unsigned int textureID; // OpenGL texture reference
+};
+
+// Global Program Settings
+struct ApplicationState {
+    bool hasActiveProject = false;
+    int inputWidth = 800;
+    int inputHeight = 600;
+};
+
+int main() {
+    ApplicationState appState;
+    Project currentProject;
+
+    // --- PHASE 1: INITIALIZE WINDOW (GLFW) ---
+    if (!glfwInit()) return -1;
+
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "LibrePhoto", NULL, NULL);
     if (!window) {
-        std::cerr << "Failed to create GLFW window!" << std::endl;
         glfwTerminate();
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Turn on VSync
 
-    // 2. Setup Dear ImGui Context
+    // --- PHASE 2: INITIALIZE UI ENGINE (ImGui) ---
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark(); // Gives us a dark mode canvas
-
-    // 3. Setup Platform/Renderer backends
+    
+    // Bind ImGui to our specific window and graphics driver
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
 
-    // 4. Main Loop
+    // --- PHASE 3: THE HEARTBEAT LOOP ---
     while (!glfwWindowShouldClose(window)) {
+        // 1. Check for inputs (mouse clicks, keyboard presses)
         glfwPollEvents();
 
-        // Start the Dear ImGui frame
+        // 2. Start a fresh, blank slate for this frame's UI
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        // --- THE SCRIPT TO TEST ---
-        ImGui::Begin("FL Studio Clone Prototype");
-        ImGui::Text("If you see this window, your setup works perfectly!");
         
-        static float volume = 0.5f;
-        ImGui::SliderFloat("Master Volume", &volume, 0.0f, 1.0f);
-        
-        static ImVec4 color = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
-        ImGui::ColorEdit3("Background Tint", (float*)&color);
-        
-        if (ImGui::Button("Test Button")) {
-            std::cout << "Button clicked! Volume is at: " << volume << std::endl;
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("New Project")) {
+                    appState.hasActiveProject = false;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
         }
-        ImGui::End();
-        // --------------------------
+            
 
-        // Rendering
-        ImGui::Render();
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
+        if (!appState.hasActiveProject) {
+            ImGui::Begin("New Canvas Setup");
+
+            ImGui::Text("VERIFICATION: THE RENDER LOOP IS UPDATED");
+            // Pass the RAM address of our width and height variables
+            ImGui::InputInt("Width", &appState.inputWidth);
+            ImGui::InputInt("Height", &appState.inputHeight);
+
+            if (ImGui::Button("Create Canvas")) {
+                currentProject.name = "Untitled Project";
+                currentProject.width = appState.inputWidth;
+                currentProject.height = appState.inputHeight;
+                currentProject.textureID = 0;
+
+                appState.hasActiveProject = true;
+            }
+            ImGui::End();
+        }
+        else {
+            ImGui::Begin("Properties");
+            ImGui::Text("Canvas: %d x %d", currentProject.width, currentProject.height);
+            ImGui::End();
+        }
         
-        glClearColor(color.x, color.y, color.z, color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui::Render(); // Finalizes the frame data
+        glClear(GL_COLOR_BUFFER_BIT); // Wipes the window background clear
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // Draws it via OpenGL
         glfwSwapBuffers(window);
     }
 
-    // 5. Cleanup
+    cout << "DEBUG: Successfully reached the render block!\n";
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
     glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
 }

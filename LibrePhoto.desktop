@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=LibrePhoto
+Comment=My ImGui Hardware Accelerated App
+Exec=/absolute/path/to/your/LibrePhoto/main_linux
+Path=/absolute/path/to/your/LibrePhoto/
+Terminal=false
+Categories=Development;Graphics;
