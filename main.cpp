@@ -3,12 +3,14 @@
 #include "imGui/imgui_impl_opengl3.h"
 #include "glfw/include/GLFW/glfw3.h" 
 #include <iostream>
+#include <string>
+#include <vector>
 
 // Canvas Data
 using std::cout;
 
 struct Project {
-  const char *name;
+  std::string name;
   int width;
   int height;
   unsigned int textureID; // OpenGL texture reference
@@ -24,8 +26,12 @@ struct ApplicationState {
 int main() {
     ApplicationState appState;
     Project currentProject;
+    //std::vector<Project> openProjects;
+    //int activeProjectIndex = -1;
 
-    // --- PHASE 1: INITIALIZE WINDOW (GLFW) ---
+    char nameBuffer[128] = "Untitled Project";
+
+    // Start up
     if (!glfwInit()) return -1;
 
     GLFWwindow* window = glfwCreateWindow(1280, 720, "LibrePhoto", NULL, NULL);
@@ -35,7 +41,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
 
-    // --- PHASE 2: INITIALIZE UI ENGINE (ImGui) ---
+    // Initialize
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     
@@ -43,7 +49,7 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
 
-    // --- PHASE 3: THE HEARTBEAT LOOP ---
+    // Loop
     while (!glfwWindowShouldClose(window)) {
         // 1. Check for inputs (mouse clicks, keyboard presses)
         glfwPollEvents();
@@ -53,22 +59,17 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-// 1. TEMPORARILY PUSH THE ROUNDING AND PADDING STYLES
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f); // Set the corner roundness
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
         
-        // 2. CONFIGURE THE POSITION AND SIZE OF THE MENU
-        // Get the current overall width of your OS application window
         float windowWidth = ImGui::GetIO().DisplaySize.x;
         
-        // Set where the menu bar starts (X = 10px from left, Y = 10px padding from top)
         ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f));
         
-        // Set the size of the menu bar (Full width minus 20px to keep it centered, 40px tall)
         ImGui::SetNextWindowSize(ImVec2(windowWidth - 20.0f, 40.0f));
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5.0f, 10.0f));
 
-        /*
+        
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("New Project")) {
@@ -77,10 +78,10 @@ int main() {
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();
-        }*/
+        }
         
 
-        // 3. SET WINDOW FLAGS TO LOCK IT IN PLACE
+        /* // 3. Optional Window
         ImGuiWindowFlags menuFlags = ImGuiWindowFlags_NoTitleBar | 
                                      ImGuiWindowFlags_NoResize | 
                                      ImGuiWindowFlags_NoMove | 
@@ -93,15 +94,16 @@ int main() {
                 if (ImGui::BeginMenu("File")) {
                     if (ImGui::MenuItem("New Project")) {
                         appState.hasActiveProject = false;
+                        // Reset the typing box back to default when they hit New Project
+                        strcpy(nameBuffer, "Untitled Project");
                     }
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
             }
             ImGui::End(); // Closes "TopMenuBarContainer"
-        }
+        }*/
 
-        // 5. POP THE STYLE SO OTHER WINDOWS DON'T GET FORCED ROUNDING
         ImGui::PopStyleVar(2);
 
 
@@ -109,13 +111,13 @@ int main() {
         if (!appState.hasActiveProject) {
             ImGui::Begin("New Canvas Setup");
 
-            ImGui::Text("VERIFICATION: THE RENDER LOOP IS UPDATED");
+            ImGui::InputText("Project Name", nameBuffer, IM_ARRAYSIZE(nameBuffer));
             // Pass the RAM address of our width and height variables
             ImGui::InputInt("Width", &appState.inputWidth);
             ImGui::InputInt("Height", &appState.inputHeight);
 
             if (ImGui::Button("Create Canvas")) {
-                currentProject.name = "Untitled Project";
+                currentProject.name = std::string(nameBuffer);
                 currentProject.width = appState.inputWidth;
                 currentProject.height = appState.inputHeight;
                 currentProject.textureID = 0;
@@ -126,6 +128,7 @@ int main() {
         }
         else {
             ImGui::Begin("Properties");
+            ImGui::Text("Project Name: %s", currentProject.name.c_str());
             ImGui::Text("Canvas: %d x %d", currentProject.width, currentProject.height);
             ImGui::End();
         }
