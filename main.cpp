@@ -66,6 +66,20 @@ int main() {
         // Set the size of the menu bar (Full width minus 20px to keep it centered, 40px tall)
         ImGui::SetNextWindowSize(ImVec2(windowWidth - 20.0f, 40.0f));
 
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5.0f, 10.0f));
+
+        /*
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("New Project")) {
+                    appState.hasActiveProject = false;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }*/
+        
+
         // 3. SET WINDOW FLAGS TO LOCK IT IN PLACE
         ImGuiWindowFlags menuFlags = ImGuiWindowFlags_NoTitleBar | 
                                      ImGuiWindowFlags_NoResize | 
@@ -73,7 +87,7 @@ int main() {
                                      ImGuiWindowFlags_NoScrollbar | 
                                      ImGuiWindowFlags_MenuBar;
 
-        // 4. DRAW THE CUSTOM BAR
+        // 4. DRAW THE CUSTOM BAR 
         if (ImGui::Begin("TopMenuBarContainer", nullptr, menuFlags)) {
             if (ImGui::BeginMenuBar()) { // Inside a regular window, we use BeginMenuBar
                 if (ImGui::BeginMenu("File")) {
@@ -88,19 +102,9 @@ int main() {
         }
 
         // 5. POP THE STYLE SO OTHER WINDOWS DON'T GET FORCED ROUNDING
-        ImGui::PopStyleVar();
+        ImGui::PopStyleVar(2);
 
-        /*
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("New Project")) {
-                    appState.hasActiveProject = false;
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
-           */ 
+
 
         if (!appState.hasActiveProject) {
             ImGui::Begin("New Canvas Setup");
