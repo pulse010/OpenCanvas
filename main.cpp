@@ -7,15 +7,21 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include <iostream>
+#include <ostream>
 #include <stdio.h>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
 #endif
 #include "glfw/include/GLFW/glfw3.h" // Will drag system OpenGL headers
+#define STB_IMAGE_IMPLEMENTATION
+#include "glfw/include/GLFW/stb_image.h"
+
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -72,7 +78,7 @@ int main(int, char**)
 
     // Create window with graphics context
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
-    GLFWwindow* window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "OpenCanvas 0.1", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -88,6 +94,24 @@ int main(int, char**)
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
     //io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
+
+    // 3. Load and set the window icon
+    GLFWimage images[1]; 
+    // stb_image will populate these variables
+    int channels;
+    
+    // Load the image file (Force 4 channels: RGBA)
+    images[0].pixels = stbi_load("placeholder_icon.png", &images[0].width, &images[0].height, &channels, 4);
+    
+    if (images[0].pixels != nullptr) {
+        // Apply the icon to the window
+        glfwSetWindowIcon(window, 1, images);
+        
+        // Free the image data loaded by stb_image after setting it
+        stbi_image_free(images[0].pixels);
+    } else {
+        std::cout << "Failed to load window icon!" << std::endl;
+    }
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
