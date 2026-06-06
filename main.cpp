@@ -8,9 +8,11 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 
+#include "imGui/imgui.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "mainmenubar.h"
 #include <iostream>
 #include <ostream>
 #include <stdio.h>
@@ -34,6 +36,7 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
+static void MainMenuBar();
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -191,6 +194,17 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        MainMenuBar();
+        NewFile();
+
+        
+        ImGui::Begin("New");
+        ImGui::Text("Ass shit fuck");
+
+        ImGui::End();
+
+        
+
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
@@ -263,4 +277,32 @@ int main(int, char**)
     glfwTerminate();
 
     return 0;
+}
+
+
+static void MainMenuBar()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("New...")) {
+                show_new_project_window = true;
+            }
+            if (ImGui::MenuItem("Open...")) {}
+            if (ImGui::MenuItem("Open As...")) {}
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
+            if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) {} // Disabled item
+            ImGui::Separator();
+            if (ImGui::MenuItem("Cut", "Ctrl+X")) {}
+            if (ImGui::MenuItem("Copy", "Ctrl+C")) {}
+            if (ImGui::MenuItem("Paste", "Ctrl+V")) {}
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
 }
