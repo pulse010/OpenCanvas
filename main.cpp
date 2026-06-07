@@ -12,7 +12,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include "mainmenubar.h"
+#include "mainUI.h"
 #include <iostream>
 #include <ostream>
 #include <stdio.h>
@@ -36,7 +36,6 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
-static void MainMenuBar();
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -197,7 +196,7 @@ int main(int, char**)
         MainMenuBar();
         NewFile();
 
-        
+
         ImGui::Begin("New");
         ImGui::Text("Ass shit fuck");
 
@@ -277,32 +276,4 @@ int main(int, char**)
     glfwTerminate();
 
     return 0;
-}
-
-
-static void MainMenuBar()
-{
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            if (ImGui::MenuItem("New...")) {
-                show_new_project_window = true;
-            }
-            if (ImGui::MenuItem("Open...")) {}
-            if (ImGui::MenuItem("Open As...")) {}
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Edit"))
-        {
-            if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
-            if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) {} // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "Ctrl+X")) {}
-            if (ImGui::MenuItem("Copy", "Ctrl+C")) {}
-            if (ImGui::MenuItem("Paste", "Ctrl+V")) {}
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
 }
