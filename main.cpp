@@ -9,10 +9,11 @@
 
 
 #include "imGui/imgui.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
+#include "imGui/imgui.h"
+#include "imGui/imgui_impl_glfw.h"
+#include "imGui/imgui_impl_opengl3.h"
 #include "mainUI.h"
+#include "glfw/include/GLFW/glfw3.h"
 #include <iostream>
 #include <ostream>
 #include <stdio.h>
@@ -161,10 +162,12 @@ int main(int, char**)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
 
-    // Our state
+    // Our state  // ALL VARIABLES IN INT MAIN||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     bool show_demo_window = true;
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    ToolType activeTool = TOOL_MOVE;
 
     // Main loop
 #ifdef __EMSCRIPTEN__
@@ -193,13 +196,18 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        ShowFixedToolBar(activeTool);
+
         MainMenuBar();
         NewFile();
 
-
-        ImGui::Begin("New");
-        ImGui::Text("Ass shit fuck");
-
+        // --- EXAMPLE WORKSPACE (Testing the State) ---
+        // This simulates your canvas reading which tool is currently equipped
+        ImGui::SetNextWindowPos(ImVec2(100, 100));
+        ImGui::Begin("Canvas Debugger");
+        if (activeTool == TOOL_MOVE)   ImGui::Text("Current Tool: [MOVING CANVAS]");
+        if (activeTool == TOOL_BRUSH)  ImGui::Text("Current Tool: [DRAWING PIXELS]");
+        if (activeTool == TOOL_ERASER) ImGui::Text("Current Tool: [ERASING PIXELS]");
         ImGui::End();
 
         
