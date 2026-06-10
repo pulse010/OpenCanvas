@@ -5,7 +5,7 @@ A free open source free C++ coded photo editing software bulit from the ground u
 
 ---
 
-<img src="opencanvas readmething.png" alt="OpenCanvas Logo" width="400">
+<img src="opencanvas readmething.png" alt="OpenCanvas Logo" width="700">
 
 ---
 
