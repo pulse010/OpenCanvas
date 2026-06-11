@@ -11,7 +11,7 @@ A free open source free C++ coded photo editing software bulit from the ground u
 
 <b>This program is licenced under the MIT licence, which means you can use this projects code for free (personally or commercially), modify it however you want, distribute or even sell what you make with it.</b>
 
-TLDR: its the "do whatever you want with this, just don't sue me" license.
+TLDR, "do whatever you want with this, just don't sue me"
 
 </div>
 
