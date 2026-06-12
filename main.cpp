@@ -80,8 +80,9 @@ int main(int, char**)
 #endif
 
     // Create window with graphics context
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
-    GLFWwindow* window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "OpenCanvas 0.1", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow((int)(800 * main_scale), (int)(500 * main_scale), "OpenCanvas 0.1", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -185,6 +186,9 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
+
+        HnadleWindowDragging(window);
+
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
         {
             ImGui_ImplGlfw_Sleep(10);
@@ -196,9 +200,8 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        MainMenuBar(window);
         ShowFixedToolBar(activeTool);
-
-        MainMenuBar();
         NewFile();
 
         // --- EXAMPLE WORKSPACE (Testing the State) ---

@@ -1,17 +1,21 @@
 #include "mainUI.h"
 #include "imGui/imgui.h"
 #include "imGui/imgui.h"
+#include "glfw/include/GLFW/glfw3.h"
+#include "glfw/include/GLFW/glfw3native.h"
 
 bool show_new_project_window = false;
-
 
 //=======================================================================
 //  M   A   I   N      M   E   N   U      F   U   N   C   T   I   O   N
 //=======================================================================
-void MainMenuBar()
+void MainMenuBar(GLFWwindow* window)
 {
     if (ImGui::BeginMainMenuBar())
     {
+        // ==========
+        // FILE MENU
+        // ==========
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New...")) {
@@ -21,6 +25,10 @@ void MainMenuBar()
             if (ImGui::MenuItem("Open As...")) {}
             ImGui::EndMenu();
         }
+
+        // ==========
+        // EDIT MENU
+        // ==========
         if (ImGui::BeginMenu("Edit"))
         {
             if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
@@ -31,10 +39,79 @@ void MainMenuBar()
             if (ImGui::MenuItem("Paste", "Ctrl+V")) {}
             ImGui::EndMenu();
         }
+
+
+
+        //=========================
+        //HORIZONTAL OPTIONS
+        //=========================
+
+        float rightSideOffset = ImGui::GetWindowWidth() - 100.0f;
+        ImGui::SameLine(rightSideOffset);
+
+        if (ImGui::Button("_", ImVec2(25, 20))) {
+            glfwIconifyWindow(window);
+        }
+
+        static bool isMaximized = false;
+        if (ImGui::Button("[ ]", ImVec2(25,20))){
+            if (!isMaximized){
+                glfwMaximizeWindow(window);
+                isMaximized = true;
+            } else {
+                glfwRestoreWindow(window);
+                isMaximized = false;
+            }
+        }
+
+        if (ImGui::Button("X", ImVec2(25, 20))){
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+        }
+
+
+
         ImGui::EndMainMenuBar();
     }
 }
 
+//===========================================================================
+// H  A  N  D  L  E    W  I  N  D  O  W    D  R  A  G  G  I  N  G
+//===========================================================================
+void HnadleWindowDragging(GLFWwindow* window){
+    static bool isDragging = false;
+    static int mouseStartX, mouseStartY;
+    static int windowStartX, windowStartY;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        double mouseX, mouseY;
+        glfwGetCursorPos(window, &mouseX, &mouseY);
+
+        if (!isDragging && mouseY >= 0 && mouseY <= 25) {
+            isDragging = true;
+
+            double globalMouseX, globalMouseY;
+            glfwGetCursorPos(window, &mouseX, &mouseY);
+            glfwGetWindowPos(window, &windowStartX, &windowStartY);
+
+            mouseStartX = (int)mouseX;
+            mouseStartY = (int)mouseY;
+        }
+
+        if (isDragging) {
+            double currentMouseX, currentMouseY;
+            glfwGetCursorPos(window, &currentMouseX, &currentMouseY);
+
+            int deltaX = (int)currentMouseX - mouseStartX;
+            int deltaY = (int)currentMouseY - mouseStartY;
+
+            int currentWinX, currentWinY;
+            glfwGetCursorPos(window, &currentMouseX, &currentMouseY);
+            glfwSetWindowPos(window, currentWinX + deltaX, currentWinY + deltaY);
+        }
+    } else{
+        isDragging = false;
+    }
+}
 
 
 //================================================================

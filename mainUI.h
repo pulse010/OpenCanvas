@@ -2,6 +2,8 @@
 
 extern bool show_new_project_window; 
 
+struct GLFWwindow;
+
 enum ToolType {
     TOOL_MOVE,
     TOOL_BRUSH,
@@ -9,6 +11,7 @@ enum ToolType {
     TOOL_BUCKET
 };
 
-void MainMenuBar();
+void MainMenuBar(GLFWwindow* window);
 void NewFile();
 void ShowFixedToolBar(ToolType& currentTool);
+void HnadleWindowDragging(GLFWwindow* window);
