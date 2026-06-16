@@ -24,6 +24,7 @@
 #include "glfw/include/GLFW/glfw3.h" // Will drag system OpenGL headers
 #define STB_IMAGE_IMPLEMENTATION
 #include "glfw/include/GLFW/stb_image.h"
+#include "imGui/imgui_internal.h"
 
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -201,13 +202,38 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+
+        ImGuiID main_dockspace_id = ImGui::DockSpaceOverViewport();
+        
+        bool is_first_time = (ImGui::DockBuilderGetNode(main_dockspace_id) == NULL);
+        
+        if (is_first_time){
+            ImGui::DockBuilderRemoveNode(main_dockspace_id);
+            ImGui::DockBuilderAddNode(main_dockspace_id);
+
+            ImGuiID right_slot_id = ImGui::DockBuilderSplitNode(main_dockspace_id, ImGuiDir_Right, 0.30f, NULL, &main_dockspace_id);
+
+            ImGuiDockNode* right_node = ImGui::DockBuilderGetNode(right_slot_id);
+
+            if (right_node != NULL){
+                right_node->LocalFlags |= ImGuiDockNodeFlags_NoTabBar;
+                right_node->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe;
+            }
+
+            ImGui::DockBuilderDockWindow("MyRightWindow", right_slot_id);
+
+            ImGui::DockBuilderFinish(main_dockspace_id);
+        }
+
+        
+
         MainMenuBar(window);
         ShowFixedToolBar(activeTool);
         NewFile();
 
-        double x, y;
-        glfwGetCursorPos(window, &x, &y);
-        std::cout << "Mouse X: " << x << " Y: " << y << std::endl;
+        //double x, y;
+        //glfwGetCursorPos(window, &x, &y);
+        //std::cout << "Mouse X: " << x << " Y: " << y << std::endl;
 
         // --- EXAMPLE WORKSPACE (Testing the State) ---
         // This simulates your canvas reading which tool is currently equipped
