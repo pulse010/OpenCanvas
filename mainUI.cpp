@@ -6,13 +6,22 @@
 
 bool show_new_project_window = false;
 
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+
 //=======================================================================
 //  M   A   I   N      M   E   N   U      F   U   N   C   T   I   O   N
 //=======================================================================
-void MainMenuBar(GLFWwindow* window)
-{
+void MainMenuBar(GLFWwindow* window) {
+    /*static bool isDraggingWindow = false;
+    static int windowStartX = 0;
+    static int windowStartY = 0;*/
+
     if (ImGui::BeginMainMenuBar())
     {
+
         // ==========
         // FILE MENU
         // ==========
@@ -46,7 +55,7 @@ void MainMenuBar(GLFWwindow* window)
         //HORIZONTAL OPTIONS
         //=========================
 
-        float rightSideOffset = ImGui::GetWindowWidth() - 100.0f;
+        /*float rightSideOffset = ImGui::GetWindowWidth() - 100.0f;
         ImGui::SameLine(rightSideOffset);
 
         if (ImGui::Button("_", ImVec2(25, 20))) {
@@ -69,49 +78,78 @@ void MainMenuBar(GLFWwindow* window)
         }
 
 
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow) && !ImGui::IsAnyItemHovered()) {
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                isDraggingWindow = true;
+            
+                // Lock in the initial window-relative cursor position
+                glfwGetWindowPos(window, &windowStartX, &windowStartY); //  New line
+            }
+        }*/
+
 
         ImGui::EndMainMenuBar();
     }
+
+    // --- APPLY WINDOW MOVEMENT ---
+    /*if (isDraggingWindow) {
+        if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+            isDraggingWindow = false;
+        } else {
+            // ImGui calculates how far your mouse moved so you don't need mouseStartX/Y anymore!
+            ImVec2 dragDelta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left);
+
+            // Move the window smoothly relative to its starting position
+            glfwSetWindowPos(window, windowStartX + (int)dragDelta.x, windowStartY + (int)dragDelta.y);
+        }
+    }*/
 }
+
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+
 
 //===========================================================================
 // H  A  N  D  L  E    W  I  N  D  O  W    D  R  A  G  G  I  N  G
 //===========================================================================
-void HnadleWindowDragging(GLFWwindow* window){
+/*void HnadleWindowDragging(GLFWwindow* window){
     static bool isDragging = false;
     static int mouseStartX, mouseStartY;
-    static int windowStartX, windowStartY;
+    // static int windowStartX, windowStartY;
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         double mouseX, mouseY;
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
         if (!isDragging && mouseY >= 0 && mouseY <= 25) {
-            isDragging = true;
-
-            double globalMouseX, globalMouseY;
-            glfwGetCursorPos(window, &mouseX, &mouseY);
-            glfwGetWindowPos(window, &windowStartX, &windowStartY);
-
-            mouseStartX = (int)mouseX;
-            mouseStartY = (int)mouseY;
+            if (!ImGui::GetIO().WantCaptureMouse) { 
+                isDragging = true;
+                mouseStartX = mouseX;
+                mouseStartY = mouseY;
+            }
         }
 
         if (isDragging) {
-            double currentMouseX, currentMouseY;
-            glfwGetCursorPos(window, &currentMouseX, &currentMouseY);
-
-            int deltaX = (int)currentMouseX - mouseStartX;
-            int deltaY = (int)currentMouseY - mouseStartY;
-
             int currentWinX, currentWinY;
-            glfwGetCursorPos(window, &currentMouseX, &currentMouseY);
-            glfwSetWindowPos(window, currentWinX + deltaX, currentWinY + deltaY);
+            glfwGetWindowPos(window, &currentWinX, &currentWinY);
+
+            int nextWinX = currentWinX + (int)mouseX - (int)mouseStartX;
+            int nextWinY = currentWinY + (int)mouseY - (int)mouseStartY;
+
+            glfwSetWindowPos(window, nextWinX, nextWinY);
         }
     } else{
         isDragging = false;
     }
-}
+}*/
+
+
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
 
 
 //================================================================
@@ -188,6 +226,15 @@ void ShowFixedToolBar(ToolType& currentTool)
     ImGui::End();
 }
 
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+
+
+//=================================
+//   N   E   W      F   I   L   E
+//=================================
 void NewFile() {
     if (show_new_project_window) {
         // This allows the user to still drag and resize the window manually afterward.

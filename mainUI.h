@@ -14,4 +14,3 @@ enum ToolType {
 void MainMenuBar(GLFWwindow* window);
 void NewFile();
 void ShowFixedToolBar(ToolType& currentTool);
-void HnadleWindowDragging(GLFWwindow* window);

@@ -80,7 +80,8 @@ int main(int, char**)
 #endif
 
     // Create window with graphics context
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    /*glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);*/
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
     GLFWwindow* window = glfwCreateWindow((int)(800 * main_scale), (int)(500 * main_scale), "OpenCanvas 0.1", nullptr, nullptr);
     if (window == nullptr)
@@ -187,7 +188,7 @@ int main(int, char**)
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
 
-        HnadleWindowDragging(window);
+        // HnadleWindowDragging(window);
 
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
         {
@@ -204,14 +205,18 @@ int main(int, char**)
         ShowFixedToolBar(activeTool);
         NewFile();
 
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        std::cout << "Mouse X: " << x << " Y: " << y << std::endl;
+
         // --- EXAMPLE WORKSPACE (Testing the State) ---
         // This simulates your canvas reading which tool is currently equipped
-        ImGui::SetNextWindowPos(ImVec2(100, 100));
+        /*ImGui::SetNextWindowPos(ImVec2(100, 100));
         ImGui::Begin("Canvas Debugger");
         if (activeTool == TOOL_MOVE)   ImGui::Text("Current Tool: [MOVING CANVAS]");
         if (activeTool == TOOL_BRUSH)  ImGui::Text("Current Tool: [DRAWING PIXELS]");
         if (activeTool == TOOL_ERASER) ImGui::Text("Current Tool: [ERASING PIXELS]");
-        ImGui::End();
+        ImGui::End();*/
 
         
 
